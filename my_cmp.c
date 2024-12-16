@@ -1,46 +1,49 @@
-#include <stdio.h>
-#include <stdlib.h>
 #include <fcntl.h>
 #include <unistd.h>
-#include <sys/stat.h>
-
-int main(int argc, char *argv[]) {
-    if (argc != 3) {
-        fprintf(stderr, "Error: Es necessiten exactament dos noms de fitxers.\n");
-        exit(-1);
-    }
-
-    int fd_arxiu_1 = open(argv[1], O_RDONLY);
-    if (fd_arxiu_1 < 0) {
-        perror("Error en obrir el primer fitxer");
-        exit(-1);
-    }
-
-    int fd_arxiu_2 = open(argv[2], O_RDONLY);
-    if (fd_arxiu_2 < 0) {
-        perror("Error en obrir el segon fitxer");
-        close(fd_arxiu_1);
-        exit(-1);
-    }
-
-    char byte1, byte2;
-    int posicio = 1, linia = 1;
-
-    while (read(fd_arxiu_1, &byte1, 1) == 1 && read(fd_arxiu_2, &byte2, 1) == 1) {
-        if (byte1 != byte2) {
-            printf("Diferència trobada en la posició %d, línia %d\n", posicio, linia);
-            close(fd_arxiu_1);
-            close(fd_arxiu_2);
-            return 0;
-        }
-        if (byte1 == '\n') {
-            linia++;
-            posicio = 0;
-        }
-        posicio++;
-    }
-
-    close(fd_arxiu_1);
-    close(fd_arxiu_2);
-    return 0;
+#include <stdio.h>
+#include <stdlib.h>
+int main ( int argc, char *argv[] ){
+if (argc!=3){
+	printf("Error en el nombre d'arguments");
+	exit(-1);
+}
+int fd1 = open(argv[1], O_RDONLY);
+if (fd1 == -1) {
+    perror("Error obrint l'arxiu");
+    exit(-1);
+}
+int fd2 = open(argv[2], O_RDONLY);
+if (fd2 == -1) {
+    perror("Error obrint l'arxiu");
+    exit(-1);
+}
+char buf1;
+char buf2;
+ssize_t i=1;
+ssize_t j=1;
+int byte=1;
+int linia=1;
+while (i>0 && j>0){
+	i= read(fd1, &buf1, 1);
+	j= read(fd2, &buf2, 1);
+	if (i == -1 || j == -1) {
+		perror("Error llegint els arxius");
+		close(fd1);
+		close(fd2);
+		exit(-1);
+}
+	if (i == 0 || j == 0) {
+		break;
+}
+	if (buf1!=buf2){
+		printf("Diferencia al byte %d, a la linia %d\n",byte,linia);
+		break;
+}
+	byte++;
+	if (buf1=='\n'){
+		linia++;
+}
+}
+close(fd1);
+close(fd2);
 }

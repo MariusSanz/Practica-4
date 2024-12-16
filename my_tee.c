@@ -4,7 +4,7 @@
 #include <unistd.h>
 #include <sys/stat.h>
 
-#Problema 1
+//Problema 1
 int main ( int argc, char *argv[] ){
 	if (argc < 2)
 	{
